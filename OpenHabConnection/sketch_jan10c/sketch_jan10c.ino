@@ -4,6 +4,7 @@
 #include <PubSubClient.h>
 
 const int refresh=3;//3 seconds
+float hum;
 // DHT settings starts
 #include "DHT.h"
 #define DHTPIN 12   
@@ -118,21 +119,44 @@ WiFiClient espClient;
 PubSubClient client(espClient);
 //___________________________________________________________________________________
 
-
+void black_screen()
+{
+ tft.setCursor(0,0);
+    
+  tft.setRotation(0);
+  tft.fillScreen(ST7735_BLACK);
+  delay(10);
+  tft.setRotation(1);
+  tft.fillScreen(ST7735_BLACK);
+  delay(10);
+  tft.setRotation(2);
+  tft.fillScreen(ST7735_BLACK);
+  delay(10);
+  tft.setRotation(3);
+  tft.fillScreen(ST7735_BLACK);
+  delay(10);
+  tft.setRotation(1);
+  tft.fillScreen(ST7735_BLACK);
+  delay(10);
+  tft.setTextColor(ST7735_RED);
+  tft.setTextSize(1);
+}
 
 void setup() {
   
   tft.init();
+   black_screen();
   Serial.begin(115200);
   Wire.begin();
   WiFi.begin(ssid, password);
   
-  tft.setCursor(0, 0);
-  tft.fillScreen(ST7735_BLACK);
+  
  
+ tft.setCursor(0,0);
+     tft.fillScreen(ST7735_BLACK);
   tft.setTextColor(ST7735_WHITE);
   tft.setTextSize(1);
-   tft.println("            ");
+   tft.println("      ");
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
     Serial.println("Connecting to WiFi..");
@@ -146,7 +170,7 @@ void setup() {
   //tft.setCursor(0, 0);
   tft.setTextColor(ST7735_WHITE);
   tft.setTextSize(1);
-  tft.println("            ");
+  tft.println("     ");
    
   tft.println("Connected to the WiFi network");
   
@@ -157,7 +181,7 @@ void setup() {
   tft.setCursor(0, 0);
   tft.setTextColor(ST7735_WHITE);
   tft.setTextSize(1);
-  tft.println("            ");
+  tft.println("    ");
   while (!client.connected()) {
     
     Serial.println("Connecting to MQTT...");
@@ -167,16 +191,16 @@ void setup() {
      tft.setCursor(0, 0);
     tft.setTextColor(ST7735_WHITE);
     tft.setTextSize(1);
-    tft.println("            ");
+    tft.println("     ");
       Serial.println("connected");  
       tft.println("connected");
  
     } else {
-      tft.println("            ");
+      tft.println("     ");
       Serial.print("failed with state ");
       Serial.print(client.state());
        tft.println("failed with state");
-        tft.println("client.state()");
+        tft.println(client.state());
       delay(2000);
  
     }
@@ -250,20 +274,42 @@ return correctedtemp;
 
 void display_data(float temp,float h)
 {
- tft.fillScreen(ST7735_BLACK);
+  tft.setTextWrap(true);
+  tft.fillScreen(ST7735_BLACK);
   tft.setCursor(0, 0);
-  tft.setTextColor(ST7735_WHITE);
+  
   tft.setTextSize(2);
+  tft.setTextColor(ST7735_WHITE);
   tft.println("       ");
   tft.println("Temp:");
+  if(temp >= 20)
+  tft.setTextColor(ST7735_RED);
+  else
+     if(temp <= 19 && temp > 16)
+        tft.setTextColor(ST7735_YELLOW);
+      else
+       tft.setTextColor(ST7735_BLUE);
+       
   tft.setTextSize(2);
   tft.print(temp);
   tft.println(" C");
+ tft.setTextColor(ST7735_WHITE);
   tft.println("       ");
   tft.println("Humidity:");
+   if(h >= 30 && h <=44)
+     tft.setTextColor(ST7735_BLUE);
+  else
+    if(h >= 45 && h <= 55)
+       tft.setTextColor(ST7735_GREEN);
+       else
+          tft.setTextColor(ST7735_RED);
+          
+          
   tft.setTextSize(2);
+ 
   tft.print(h);
   tft.println(" %");
+  delay(500);
   
 }
 
@@ -273,6 +319,10 @@ void loop() {
 //_______________________________READ_TEMPERATURE_AND_HUMIDITY_____________________
  int temp= getTemp102();
   float h = dht.readHumidity();// Reading humidity 
+  if(h>=0&&h<=99)
+     hum = h;
+  else
+     h=hum;
 //_________________________________________________________________________________
 
   
@@ -293,6 +343,6 @@ void loop() {
   client.publish(temperaturepub,temperature);
 //_________________________________________________________________________________
 
-  delay(4000);
+  delay(20000);
    
 }
