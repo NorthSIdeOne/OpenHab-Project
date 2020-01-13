@@ -105,9 +105,9 @@ void ftoa(float n, char* res, int afterpoint)
 
 
 
-const char* ssid = "HUAWEI P9"; // Enter your WiFi name
-const char* password =  "11111111"; // Enter WiFi password
-const char* mqttServer = "192.168.43.189";
+const char* ssid = ""; // Enter your WiFi name
+const char* password =  ""; // Enter WiFi password
+const char* mqttServer = "";
 const int mqttPort = 1883;
 const char* mqttUser = "otfxknod";
 const char* mqttPassword = "nSuUc1dDLygF";
