@@ -1,1 +1,19 @@
 # OpenHab-Project
+
+
+TMP102:
+
+SDA->D2
+SCL->D1
+
+
+DHT11:
+OUT->D6
+
+TFT LCD:
+VCC/BL ->3v3
+SCL->D5
+SDA->D7
+RES->D3
+DC->D4
+CS->D8
